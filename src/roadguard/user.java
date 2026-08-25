@@ -10,7 +10,7 @@ public class user {
     private String role;
     private LocalDateTime createdAt;
 
-    // Constructor for new user
+    
     public user(String name, String email, String passwordHash, String role) {
         setName(name);
         setEmail(email);
@@ -18,7 +18,7 @@ public class user {
         setRole(role);
     }
 
-    // Constructor for existing user
+  
     public user(int userId, String name, String email,
                 String passwordHash, String role,
                 LocalDateTime createdAt) {
@@ -30,7 +30,7 @@ public class user {
         this.createdAt = createdAt;
     }
 
-    // Getters
+   
     public int getUserId() { return userId; }
     public String getName() { return name; }
     public String getEmail() { return email; }
@@ -38,7 +38,7 @@ public class user {
     public String getRole() { return role; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    // Setters
+  
     public void setUserId(int userId) { this.userId = userId; }
 
     public void setName(String name) {
@@ -74,7 +74,7 @@ public class user {
         this.createdAt = createdAt;
     }
 
-    @Override
+  
     public String toString() {
         return "User{" +
                 "userId=" + userId +
