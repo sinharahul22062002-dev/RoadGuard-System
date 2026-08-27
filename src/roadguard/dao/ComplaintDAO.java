@@ -8,9 +8,11 @@ import roadguard.connection.DBConnection;
 
 public class ComplaintDAO {
 
+    // Add a complaint
     public boolean addComplaint(String email, String description, String location) {
 
         try {
+
             Connection con = DBConnection.getConnection();
 
             String sql = "INSERT INTO complaints " +
@@ -38,6 +40,7 @@ public class ComplaintDAO {
     }
 
 
+    // View complaints of a citizen
     public void viewComplaints(String email) {
 
         try {
@@ -54,7 +57,9 @@ public class ComplaintDAO {
 
             while (rs.next()) {
 
-                System.out.println("\nComplaint ID: "
+                System.out.println("\n-------------------------");
+
+                System.out.println("Complaint ID: "
                         + rs.getInt("complaint_id"));
 
                 System.out.println("Description: "
@@ -72,6 +77,77 @@ public class ComplaintDAO {
         } catch (Exception e) {
 
             System.out.println("Could not view complaints!");
+        }
+    }
+
+
+    // View all complaints for Authority
+    public void viewAllComplaints() {
+
+        try {
+
+            Connection con = DBConnection.getConnection();
+
+            String sql = "SELECT * FROM complaints";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                System.out.println("\n-------------------------");
+
+                System.out.println("Complaint ID: "
+                        + rs.getInt("complaint_id"));
+
+                System.out.println("Citizen Email: "
+                        + rs.getString("citizen_email"));
+
+                System.out.println("Description: "
+                        + rs.getString("description"));
+
+                System.out.println("Location: "
+                        + rs.getString("location"));
+
+                System.out.println("Status: "
+                        + rs.getString("status"));
+            }
+
+            con.close();
+
+        } catch (Exception e) {
+
+            System.out.println("Could not view complaints!");
+        }
+    }
+
+
+    // Update complaint status
+    public boolean updateStatus(int complaintId, String status) {
+
+        try {
+
+            Connection con = DBConnection.getConnection();
+
+            String sql = "UPDATE complaints SET status = ? " +
+                         "WHERE complaint_id = ?";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ps.setString(1, status);
+            ps.setInt(2, complaintId);
+
+            ps.executeUpdate();
+
+            con.close();
+
+            return true;
+
+        } catch (Exception e) {
+
+            System.out.println("Status update failed!");
+            return false;
         }
     }
 }

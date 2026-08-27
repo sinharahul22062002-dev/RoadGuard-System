@@ -5,9 +5,12 @@ import java.util.Scanner;
 public class Citizen {
 
     private Scanner scanner;
+    private String email;
 
-    public Citizen() {
-        scanner = new Scanner(System.in);
+    public Citizen(String email, Scanner scanner) {
+
+        this.email = email;
+        this.scanner = scanner;
     }
 
     public void start() {
@@ -17,9 +20,8 @@ public class Citizen {
         while (running) {
 
             System.out.println("\n===== CITIZEN PORTAL =====");
-            System.out.println("1. Submit Complaint");
-            System.out.println("2. View My Complaints");
-            System.out.println("3. Logout");
+            System.out.println("1. Complaint Portal");
+            System.out.println("2. Logout");
 
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
@@ -27,26 +29,25 @@ public class Citizen {
             switch (choice) {
 
                 case "1":
-                    System.out.println(
-                            "\nComplaint feature will be added later."
-                    );
+
+                    ComplaintPortal portal =
+                            new ComplaintPortal(email, scanner);
+
+                    portal.start();
+
                     break;
 
                 case "2":
-                    System.out.println(
-                            "\nView complaints feature will be added later."
-                    );
-                    break;
 
-                case "3":
                     System.out.println("\nLogging out...");
+
                     running = false;
+
                     break;
 
                 default:
-                    System.out.println(
-                            "\nInvalid choice. Please try again."
-                    );
+
+                    System.out.println("\nInvalid choice.");
             }
         }
     }

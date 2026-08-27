@@ -10,10 +10,11 @@ public class ComplaintPortal {
     private ComplaintDAO complaintDAO;
     private String email;
 
-    public ComplaintPortal(String email) {
+    public ComplaintPortal(String email, Scanner scanner) {
+
         this.email = email;
-        scanner = new Scanner(System.in);
-        complaintDAO = new ComplaintDAO();
+        this.scanner = scanner;
+        this.complaintDAO = new ComplaintDAO();
     }
 
     public void start() {
@@ -22,10 +23,10 @@ public class ComplaintPortal {
 
         while (running) {
 
-            System.out.println("\n===== CITIZEN PORTAL =====");
+            System.out.println("\n===== COMPLAINT PORTAL =====");
             System.out.println("1. Submit Complaint");
             System.out.println("2. View My Complaints");
-            System.out.println("3. Logout");
+            System.out.println("3. Back");
 
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
@@ -41,7 +42,6 @@ public class ComplaintPortal {
                     break;
 
                 case "3":
-                    System.out.println("Logging out...");
                     running = false;
                     break;
 
@@ -50,6 +50,7 @@ public class ComplaintPortal {
             }
         }
     }
+
 
     private void submitComplaint() {
 
@@ -61,22 +62,40 @@ public class ComplaintPortal {
         System.out.print("Enter location: ");
         String location = scanner.nextLine();
 
-        boolean success =
-                complaintDAO.addComplaint(email, description, location);
+        if (description.isEmpty() || location.isEmpty()) {
+
+            System.out.println(
+                    "Description and location cannot be empty."
+            );
+
+            return;
+        }
+
+        boolean success = complaintDAO.addComplaint(
+                email,
+                description,
+                location
+        );
 
         if (success) {
-            System.out.println("\nComplaint submitted successfully!");
+
+            System.out.println(
+                    "\nComplaint submitted successfully!"
+            );
+
         } else {
-            System.out.println("\nComplaint submission failed.");
+
+            System.out.println(
+                    "\nComplaint submission failed!"
+            );
         }
     }
+
 
     private void viewComplaints() {
 
         System.out.println("\n===== MY COMPLAINTS =====");
 
-        System.out.println(
-                "Complaint viewing feature is not available yet."
-        );
+        complaintDAO.viewComplaints(email);
     }
 }

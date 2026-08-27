@@ -52,17 +52,21 @@ public class Login {
 
         if (role.equals("CITIZEN")) {
 
-            Citizen citizen = new Citizen();
+            Citizen citizen =
+                    new Citizen(loggedInUser.getEmail(), scanner);
+
             citizen.start();
 
         } else if (role.equals("AUTHORITY")) {
 
             Authority authority = new Authority();
+
             authority.start();
 
         } else if (role.equals("ADMIN")) {
 
             Admin admin = new Admin(userService, scanner);
+
             admin.start();
 
         } else {
