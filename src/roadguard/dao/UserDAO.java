@@ -10,7 +10,6 @@ import roadguard.user;
 
 public class UserDAO {
 
-    // Add a new user
     public boolean addUser(user newUser) {
 
         String sql = "INSERT INTO users (name, email, password_hash, role) "
@@ -18,7 +17,8 @@ public class UserDAO {
 
         try (
             Connection connection = DBConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
         ) {
 
             statement.setString(1, newUser.getName());
@@ -39,14 +39,15 @@ public class UserDAO {
         }
     }
 
-    // Find user by email
+
     public user findByEmail(String email) {
 
         String sql = "SELECT * FROM users WHERE email = ?";
 
         try (
             Connection connection = DBConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
         ) {
 
             statement.setString(1, email);
@@ -66,14 +67,15 @@ public class UserDAO {
         return null;
     }
 
-    // Find user by ID
+
     public user findById(int userId) {
 
         String sql = "SELECT * FROM users WHERE user_id = ?";
 
         try (
             Connection connection = DBConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
         ) {
 
             statement.setInt(1, userId);
@@ -93,14 +95,65 @@ public class UserDAO {
         return null;
     }
 
-    // Delete user
+
+    public boolean updateName(int userId, String newName) {
+
+        String sql = "UPDATE users SET name = ? WHERE user_id = ?";
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, newName);
+            statement.setInt(2, userId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Error updating name.");
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+
+    public boolean updateEmail(int userId, String newEmail) {
+
+        String sql = "UPDATE users SET email = ? WHERE user_id = ?";
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, newEmail);
+            statement.setInt(2, userId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Error updating email.");
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+
     public boolean deleteUser(int userId) {
 
         String sql = "DELETE FROM users WHERE user_id = ?";
 
         try (
             Connection connection = DBConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
         ) {
 
             statement.setInt(1, userId);
@@ -118,21 +171,32 @@ public class UserDAO {
         }
     }
 
-    // Convert database record into user object
+
     private user createUserFromResultSet(ResultSet resultSet)
             throws SQLException {
 
         int userId = resultSet.getInt("user_id");
-        String name = resultSet.getString("name");
-        String email = resultSet.getString("email");
-        String passwordHash = resultSet.getString("password_hash");
-        String role = resultSet.getString("role");
+
+        String name =
+                resultSet.getString("name");
+
+        String email =
+                resultSet.getString("email");
+
+        String passwordHash =
+                resultSet.getString("password_hash");
+
+        String role =
+                resultSet.getString("role");
 
         java.sql.Timestamp timestamp =
                 resultSet.getTimestamp("created_at");
 
-        java.time.LocalDateTime createdAt =
-                timestamp.toLocalDateTime();
+        java.time.LocalDateTime createdAt = null;
+
+        if (timestamp != null) {
+            createdAt = timestamp.toLocalDateTime();
+        }
 
         return new user(
                 userId,

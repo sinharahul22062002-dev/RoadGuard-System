@@ -24,8 +24,8 @@ public class Authority {
             System.out.println("\n===== AUTHORITY PORTAL =====");
             System.out.println("1. View Complaints");
             System.out.println("2. Update Complaint Status");
-            System.out.println("3. View Road Risks");
-            System.out.println("4. Manage Repairs");
+            System.out.println("3. Road Risk Management");
+            System.out.println("4. Repair Management");
             System.out.println("5. Logout");
 
             System.out.print("Enter your choice: ");
@@ -35,7 +35,7 @@ public class Authority {
 
                 case "1":
 
-                    viewComplaints();
+                    complaintDAO.viewAllComplaints();
 
                     break;
 
@@ -47,17 +47,19 @@ public class Authority {
 
                 case "3":
 
-                    System.out.println(
-                            "\nRoad risk management will be added later."
-                    );
+                    RoadRiskPortal riskPortal =
+                            new RoadRiskPortal(scanner);
+
+                    riskPortal.start();
 
                     break;
 
                 case "4":
 
-                    System.out.println(
-                            "\nRepair management will be added later."
-                    );
+                    RepairPortal repairPortal =
+                            new RepairPortal(scanner);
+
+                    repairPortal.start();
 
                     break;
 
@@ -76,14 +78,6 @@ public class Authority {
                     );
             }
         }
-    }
-
-
-    private void viewComplaints() {
-
-        System.out.println("\n===== ALL COMPLAINTS =====");
-
-        complaintDAO.viewAllComplaints();
     }
 
 

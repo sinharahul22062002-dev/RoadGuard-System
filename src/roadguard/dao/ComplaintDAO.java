@@ -8,8 +8,9 @@ import roadguard.connection.DBConnection;
 
 public class ComplaintDAO {
 
-    // Add a complaint
-    public boolean addComplaint(String email, String description, String location) {
+    public boolean addComplaint(String email,
+                                String description,
+                                String location) {
 
         try {
 
@@ -40,14 +41,15 @@ public class ComplaintDAO {
     }
 
 
-    // View complaints of a citizen
+    // Citizen: View own complaints
     public void viewComplaints(String email) {
 
         try {
 
             Connection con = DBConnection.getConnection();
 
-            String sql = "SELECT * FROM complaints WHERE citizen_email = ?";
+            String sql =
+                    "SELECT * FROM complaints WHERE citizen_email = ?";
 
             PreparedStatement ps = con.prepareStatement(sql);
 
@@ -81,7 +83,7 @@ public class ComplaintDAO {
     }
 
 
-    // View all complaints for Authority
+    // Authority: View all complaints
     public void viewAllComplaints() {
 
         try {
@@ -118,35 +120,37 @@ public class ComplaintDAO {
 
         } catch (Exception e) {
 
-            System.out.println("Could not view complaints!");
+            System.out.println("Could not view all complaints!");
         }
     }
 
 
-    // Update complaint status
-    public boolean updateStatus(int complaintId, String status) {
+    // Authority: Update complaint status
+    public boolean updateStatus(int complaintId,
+                                String status) {
 
         try {
 
             Connection con = DBConnection.getConnection();
 
-            String sql = "UPDATE complaints SET status = ? " +
-                         "WHERE complaint_id = ?";
+            String sql =
+                    "UPDATE complaints SET status = ? " +
+                    "WHERE complaint_id = ?";
 
             PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setString(1, status);
             ps.setInt(2, complaintId);
 
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
 
             con.close();
 
-            return true;
+            return rows > 0;
 
         } catch (Exception e) {
 
-            System.out.println("Status update failed!");
+            System.out.println("Could not update complaint!");
             return false;
         }
     }

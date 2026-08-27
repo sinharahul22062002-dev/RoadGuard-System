@@ -21,7 +21,8 @@ public class Citizen {
 
             System.out.println("\n===== CITIZEN PORTAL =====");
             System.out.println("1. Complaint Portal");
-            System.out.println("2. Logout");
+            System.out.println("2. Risk Calculator");
+            System.out.println("3. Logout");
 
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
@@ -30,14 +31,23 @@ public class Citizen {
 
                 case "1":
 
-                    ComplaintPortal portal =
+                    ComplaintPortal complaintPortal =
                             new ComplaintPortal(email, scanner);
 
-                    portal.start();
+                    complaintPortal.start();
 
                     break;
 
                 case "2":
+
+                    RiskCalculator riskCalculator =
+                            new RiskCalculator(scanner);
+
+                    riskCalculator.start();
+
+                    break;
+
+                case "3":
 
                     System.out.println("\nLogging out...");
 

@@ -11,12 +11,12 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    
+
     public user findUserById(int userId) {
         return userDAO.findById(userId);
     }
 
-   
+
     public user findUserByEmail(String email) {
         return userDAO.findByEmail(email);
     }
@@ -26,26 +26,50 @@ public class UserService {
         return userDAO.deleteUser(userId);
     }
 
-    
+
     public boolean updateUserName(int userId, String newName) {
-        user existingUser = userDAO.findById(userId);
-        if (existingUser == null || newName == null || newName.trim().isEmpty()) {
+
+        if (newName == null || newName.trim().isEmpty()) {
             return false;
         }
-        existingUser.setName(newName.trim());
-        return true;
+
+        user existingUser = userDAO.findById(userId);
+
+        if (existingUser == null) {
+            return false;
+        }
+
+        return userDAO.updateName(
+                userId,
+                newName.trim()
+        );
     }
 
+
     public boolean updateUserEmail(int userId, String newEmail) {
+
+        if (newEmail == null || newEmail.trim().isEmpty()) {
+            return false;
+        }
+
         user existingUser = userDAO.findById(userId);
-        if (existingUser == null || newEmail == null || newEmail.trim().isEmpty()) {
+
+        if (existingUser == null) {
             return false;
         }
-        user emailUser = userDAO.findByEmail(newEmail.trim());
-        if (emailUser != null && emailUser.getUserId() != userId) {
+
+        user emailUser =
+                userDAO.findByEmail(newEmail.trim());
+
+        if (emailUser != null &&
+                emailUser.getUserId() != userId) {
+
             return false;
         }
-        existingUser.setEmail(newEmail.trim());
-        return true;
+
+        return userDAO.updateEmail(
+                userId,
+                newEmail.trim()
+        );
     }
 }
