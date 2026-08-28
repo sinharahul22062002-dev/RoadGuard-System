@@ -1,7 +1,6 @@
 package roadguard.menu;
 
 import java.util.Scanner;
-
 import roadguard.service.AuthService;
 import roadguard.service.UserService;
 import roadguard.user;
@@ -59,7 +58,7 @@ public class Login {
 
         } else if (role.equals("AUTHORITY")) {
 
-            Authority authority = new Authority();
+            Authority authority = new Authority(scanner);
 
             authority.start();
 

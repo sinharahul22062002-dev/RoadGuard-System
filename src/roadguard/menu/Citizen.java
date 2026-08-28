@@ -25,7 +25,8 @@ public class Citizen {
             System.out.println("3. Logout");
 
             System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+
+            String choice = scanner.nextLine().trim();
 
             switch (choice) {
 
@@ -57,7 +58,9 @@ public class Citizen {
 
                 default:
 
-                    System.out.println("\nInvalid choice.");
+                    System.out.println(
+                            "\nInvalid choice. Please enter 1, 2 or 3."
+                    );
             }
         }
     }

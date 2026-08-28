@@ -1,5 +1,6 @@
 package roadguard.menu;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import roadguard.dao.ComplaintDAO;
@@ -9,10 +10,10 @@ public class Authority {
     private Scanner scanner;
     private ComplaintDAO complaintDAO;
 
-    public Authority() {
+    public Authority(Scanner scanner) {
 
-        scanner = new Scanner(System.in);
-        complaintDAO = new ComplaintDAO();
+        this.scanner = scanner;
+        this.complaintDAO = new ComplaintDAO();
     }
 
     public void start() {
@@ -87,10 +88,34 @@ public class Authority {
                 "\n===== UPDATE COMPLAINT STATUS ====="
         );
 
-        System.out.print("Enter complaint ID: ");
+        int complaintId;
 
-        int complaintId =
-                Integer.parseInt(scanner.nextLine());
+        try {
+
+            System.out.print("Enter complaint ID: ");
+
+            complaintId = Integer.parseInt(
+                    scanner.nextLine().trim()
+            );
+
+            if (complaintId <= 0) {
+
+                System.out.println(
+                        "Complaint ID must be a positive number."
+                );
+
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid complaint ID. Please enter a number."
+            );
+
+            return;
+        }
+
 
         System.out.println("\n1. PENDING");
         System.out.println("2. IN_PROGRESS");
@@ -98,28 +123,39 @@ public class Authority {
 
         System.out.print("Enter status: ");
 
-        String choice = scanner.nextLine();
+        String choice = scanner.nextLine().trim();
 
         String status;
 
-        if (choice.equals("1")) {
+        switch (choice) {
 
-            status = "PENDING";
+            case "1":
 
-        } else if (choice.equals("2")) {
+                status = "PENDING";
 
-            status = "IN_PROGRESS";
+                break;
 
-        } else if (choice.equals("3")) {
+            case "2":
 
-            status = "RESOLVED";
+                status = "IN_PROGRESS";
 
-        } else {
+                break;
 
-            System.out.println("Invalid status.");
+            case "3":
 
-            return;
+                status = "RESOLVED";
+
+                break;
+
+            default:
+
+                System.out.println(
+                        "Invalid status choice."
+                );
+
+                return;
         }
+
 
         boolean success =
                 complaintDAO.updateStatus(
@@ -136,7 +172,7 @@ public class Authority {
         } else {
 
             System.out.println(
-                    "Status update failed!"
+                    "Status update failed. Complaint may not exist."
             );
         }
     }

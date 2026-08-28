@@ -16,34 +16,48 @@ public class Registration {
 
     public void start() {
 
-        System.out.println("\n===== USER REGISTRATION =====");
+        try {
 
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
+            System.out.println("\n===== USER REGISTRATION =====");
 
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
+            System.out.print("Enter name: ");
+            String name = scanner.nextLine();
 
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+            System.out.print("Enter email: ");
+            String email = scanner.nextLine();
 
-        System.out.print(
-                "Enter role (CITIZEN/AUTHORITY/ADMIN): "
-        );
-        String role = scanner.nextLine().toUpperCase();
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
 
-        boolean registered = authService.registerUser(
-                name,
-                email,
-                password,
-                role
-        );
+            System.out.print(
+                    "Enter role (CITIZEN/AUTHORITY/ADMIN): "
+            );
+            String role = scanner.nextLine().trim().toUpperCase();
 
-        if (registered) {
-            System.out.println("\nRegistration successful!");
-        } else {
+            boolean registered = authService.registerUser(
+                    name,
+                    email,
+                    password,
+                    role
+            );
+
+            if (registered) {
+
+                System.out.println(
+                        "\nRegistration successful!"
+                );
+
+            } else {
+
+                System.out.println(
+                        "\nRegistration failed."
+                );
+            }
+
+        } catch (IllegalStateException e) {
+
             System.out.println(
-                    "\nRegistration failed."
+                    "Input system error: " + e.getMessage()
             );
         }
     }

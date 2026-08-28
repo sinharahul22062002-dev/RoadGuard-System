@@ -3,105 +3,259 @@ package roadguard.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
+import java.sql.SQLException;
 import roadguard.connection.DBConnection;
 
 public class RepairDAO {
 
-    public boolean addRepair(String location,
-                             String description) {
+    // Add new repair
+    public boolean addRepair(int complaintId,
+                             int assignedTo,
+                             String repairType,
+                             String status,
+                             String assignedDate) {
+
+        String sql = "INSERT INTO repairs "
+                   + "(complaint_id, assigned_to, repair_type, "
+                   + "status, assigned_date) "
+                   + "VALUES (?, ?, ?, ?, ?)";
+
+        Connection con = null;
+        PreparedStatement ps = null;
 
         try {
 
-            Connection con = DBConnection.getConnection();
+            con = DBConnection.getConnection();
 
-            String sql = "INSERT INTO repairs " +
-                         "(location, description, status) " +
-                         "VALUES (?, ?, ?)";
+            if (con == null) {
+                System.out.println(
+                        "Database connection unavailable."
+                );
+                return false;
+            }
 
-            PreparedStatement ps = con.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
 
-            ps.setString(1, location);
-            ps.setString(2, description);
-            ps.setString(3, "PENDING");
+            ps.setInt(1, complaintId);
+            ps.setInt(2, assignedTo);
+            ps.setString(3, repairType);
+            ps.setString(4, status);
+            ps.setString(5, assignedDate);
 
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
 
-            con.close();
+            return rows > 0;
 
-            return true;
+        } catch (SQLException e) {
 
-        } catch (Exception e) {
+            System.out.println(
+                    "Could not add repair."
+            );
 
-            System.out.println("Could not add repair!");
             return false;
+
+        } finally {
+
+            try {
+
+                if (ps != null) {
+                    ps.close();
+                }
+
+                if (con != null) {
+                    con.close();
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(
+                        "Could not close database resources."
+                );
+            }
         }
     }
 
 
+    // View all repairs
     public void viewRepairs() {
+
+        String sql =
+                "SELECT r.repair_id, "
+              + "r.complaint_id, "
+              + "u.name AS assigned_name, "
+              + "u.email AS assigned_email, "
+              + "r.repair_type, "
+              + "r.status, "
+              + "r.assigned_date, "
+              + "r.completed_date "
+              + "FROM repairs r "
+              + "JOIN users u "
+              + "ON r.assigned_to = u.user_id "
+              + "ORDER BY r.repair_id";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
 
-            Connection con = DBConnection.getConnection();
+            con = DBConnection.getConnection();
 
-            String sql = "SELECT * FROM repairs";
+            if (con == null) {
+                System.out.println(
+                        "Database connection unavailable."
+                );
+                return;
+            }
 
-            PreparedStatement ps = con.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
 
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
+
+            boolean found = false;
 
             while (rs.next()) {
 
-                System.out.println("\n-------------------------");
+                found = true;
 
-                System.out.println("Repair ID: "
-                        + rs.getInt("repair_id"));
+                System.out.println(
+                        "\n-------------------------"
+                );
 
-                System.out.println("Location: "
-                        + rs.getString("location"));
+                System.out.println(
+                        "Repair ID: "
+                        + rs.getInt("repair_id")
+                );
 
-                System.out.println("Description: "
-                        + rs.getString("description"));
+                System.out.println(
+                        "Complaint ID: "
+                        + rs.getInt("complaint_id")
+                );
 
-                System.out.println("Status: "
-                        + rs.getString("status"));
+                System.out.println(
+                        "Assigned To: "
+                        + rs.getString("assigned_name")
+                        + " ("
+                        + rs.getString("assigned_email")
+                        + ")"
+                );
+
+                System.out.println(
+                        "Repair Type: "
+                        + rs.getString("repair_type")
+                );
+
+                System.out.println(
+                        "Status: "
+                        + rs.getString("status")
+                );
+
+                System.out.println(
+                        "Assigned Date: "
+                        + rs.getDate("assigned_date")
+                );
+
+                System.out.println(
+                        "Completed Date: "
+                        + rs.getDate("completed_date")
+                );
             }
 
-            con.close();
+            if (!found) {
+                System.out.println(
+                        "No repairs found."
+                );
+            }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
 
-            System.out.println("Could not view repairs!");
+            System.out.println(
+                    "Could not view repairs."
+            );
+
+        } finally {
+
+            try {
+
+                if (rs != null) {
+                    rs.close();
+                }
+
+                if (ps != null) {
+                    ps.close();
+                }
+
+                if (con != null) {
+                    con.close();
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(
+                        "Could not close database resources."
+                );
+            }
         }
     }
 
 
+    // Update repair status
     public boolean updateStatus(int repairId,
                                 String status) {
 
+        String sql =
+                "UPDATE repairs SET status = ? "
+              + "WHERE repair_id = ?";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
         try {
 
-            Connection con = DBConnection.getConnection();
+            con = DBConnection.getConnection();
 
-            String sql = "UPDATE repairs SET status = ? " +
-                         "WHERE repair_id = ?";
+            if (con == null) {
+                System.out.println(
+                        "Database connection unavailable."
+                );
+                return false;
+            }
 
-            PreparedStatement ps = con.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
 
             ps.setString(1, status);
             ps.setInt(2, repairId);
 
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
 
-            con.close();
+            return rows > 0;
 
-            return true;
+        } catch (SQLException e) {
 
-        } catch (Exception e) {
+            System.out.println(
+                    "Repair status update failed."
+            );
 
-            System.out.println("Repair status update failed!");
             return false;
+
+        } finally {
+
+            try {
+
+                if (ps != null) {
+                    ps.close();
+                }
+
+                if (con != null) {
+                    con.close();
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(
+                        "Could not close database resources."
+                );
+            }
         }
     }
 }

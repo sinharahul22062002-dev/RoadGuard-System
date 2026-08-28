@@ -1,7 +1,6 @@
 package roadguard.menu;
 
 import java.util.Scanner;
-
 import roadguard.dao.ComplaintDAO;
 
 public class ComplaintPortal {
@@ -17,6 +16,7 @@ public class ComplaintPortal {
         this.complaintDAO = new ComplaintDAO();
     }
 
+
     public void start() {
 
         boolean running = true;
@@ -29,7 +29,8 @@ public class ComplaintPortal {
             System.out.println("3. Back");
 
             System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+
+            String choice = scanner.nextLine().trim();
 
             switch (choice) {
 
@@ -46,36 +47,178 @@ public class ComplaintPortal {
                     break;
 
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println(
+                            "Invalid choice. Please enter 1, 2 or 3."
+                    );
             }
         }
     }
 
 
+    // Submit Complaint
     private void submitComplaint() {
 
         System.out.println("\n===== SUBMIT COMPLAINT =====");
 
-        System.out.print("Enter complaint description: ");
-        String description = scanner.nextLine();
 
-        System.out.print("Enter location: ");
-        String location = scanner.nextLine();
+        // Complaint Type
 
-        if (description.isEmpty() || location.isEmpty()) {
+        System.out.println("\nSelect Complaint Type:");
+        System.out.println("1. POTHOLE");
+        System.out.println("2. DAMAGED_ROAD");
+        System.out.println("3. BROKEN_STREETLIGHT");
+        System.out.println("4. WATERLOGGING");
+        System.out.println("5. MISSING_SIGN");
+        System.out.println("6. OTHER");
+
+        System.out.print("Enter choice: ");
+
+        String typeChoice =
+                scanner.nextLine().trim();
+
+        String type;
+
+        switch (typeChoice) {
+
+            case "1":
+                type = "POTHOLE";
+                break;
+
+            case "2":
+                type = "DAMAGED_ROAD";
+                break;
+
+            case "3":
+                type = "BROKEN_STREETLIGHT";
+                break;
+
+            case "4":
+                type = "WATERLOGGING";
+                break;
+
+            case "5":
+                type = "MISSING_SIGN";
+                break;
+
+            case "6":
+                type = "OTHER";
+                break;
+
+            default:
+                System.out.println(
+                        "Invalid complaint type."
+                );
+                return;
+        }
+
+
+        // Description
+
+        System.out.print(
+                "\nEnter complaint description: "
+        );
+
+        String description =
+                scanner.nextLine().trim();
+
+
+        // Location
+
+        System.out.print("Enter area name: ");
+
+        String areaName =
+                scanner.nextLine().trim();
+
+
+        System.out.print("Enter city: ");
+
+        String city =
+                scanner.nextLine().trim();
+
+
+        // Severity
+
+        System.out.println("\nSelect Severity:");
+        System.out.println("1. LOW");
+        System.out.println("2. MEDIUM");
+        System.out.println("3. HIGH");
+        System.out.println("4. CRITICAL");
+
+        System.out.print("Enter choice: ");
+
+        String severityChoice =
+                scanner.nextLine().trim();
+
+        String severity;
+
+        switch (severityChoice) {
+
+            case "1":
+                severity = "LOW";
+                break;
+
+            case "2":
+                severity = "MEDIUM";
+                break;
+
+            case "3":
+                severity = "HIGH";
+                break;
+
+            case "4":
+                severity = "CRITICAL";
+                break;
+
+            default:
+                System.out.println(
+                        "Invalid severity."
+                );
+                return;
+        }
+
+
+        // Validation
+
+        if (description.isEmpty()) {
 
             System.out.println(
-                    "Description and location cannot be empty."
+                    "Complaint description cannot be empty."
             );
 
             return;
         }
 
-        boolean success = complaintDAO.addComplaint(
-                email,
-                description,
-                location
-        );
+        if (areaName.isEmpty()) {
+
+            System.out.println(
+                    "Area name cannot be empty."
+            );
+
+            return;
+        }
+
+        if (city.isEmpty()) {
+
+            System.out.println(
+                    "City cannot be empty."
+            );
+
+            return;
+        }
+
+
+        // Add Complaint
+
+        boolean success =
+                complaintDAO.addComplaint(
+                        email,
+                        type,
+                        description,
+                        severity,
+                        areaName,
+                        city
+                );
+
 
         if (success) {
 
@@ -86,11 +229,13 @@ public class ComplaintPortal {
         } else {
 
             System.out.println(
-                    "\nComplaint submission failed!"
+                    "\nComplaint submission failed."
             );
         }
     }
 
+
+    // View My Complaints
 
     private void viewComplaints() {
 

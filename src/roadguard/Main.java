@@ -1,7 +1,6 @@
 package roadguard;
 
 import java.util.Scanner;
-
 import roadguard.dao.UserDAO;
 import roadguard.menu.Login;
 import roadguard.menu.Registration;
@@ -14,67 +13,92 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // DAO
-        UserDAO userDAO = new UserDAO();
+        try {
 
-        // Services
-        AuthService authService = new AuthService(userDAO);
-        UserService userService = new UserService(userDAO);
+            // DAO
+            UserDAO userDAO = new UserDAO();
 
-        boolean running = true;
+            // Services
+            AuthService authService =
+                    new AuthService(userDAO);
 
-        while (running) {
+            UserService userService =
+                    new UserService(userDAO);
 
-            System.out.println("\n===== ROADGUARD SYSTEM =====");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
+            boolean running = true;
 
-            System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+            while (running) {
 
-            switch (choice) {
+                System.out.println(
+                        "\n===== ROADGUARD SYSTEM ====="
+                );
 
-                case "1":
+                System.out.println("1. Register");
+                System.out.println("2. Login");
+                System.out.println("3. Exit");
 
-                    Registration registration =
-                            new Registration(authService, scanner);
+                System.out.print("Enter your choice: ");
 
-                    registration.start();
+                String choice = scanner.nextLine();
 
-                    break;
+                switch (choice) {
 
-                case "2":
+                    case "1":
 
-                    Login login =
-                            new Login(
-                                    authService,
-                                    userService,
-                                    scanner
-                            );
+                        Registration registration =
+                                new Registration(
+                                        authService,
+                                        scanner
+                                );
 
-                    login.start();
+                        registration.start();
 
-                    break;
+                        break;
 
-                case "3":
 
-                    running = false;
+                    case "2":
 
-                    System.out.println(
-                            "\nThank you for using RoadGuard."
-                    );
+                        Login login =
+                                new Login(
+                                        authService,
+                                        userService,
+                                        scanner
+                                );
 
-                    break;
+                        login.start();
 
-                default:
+                        break;
 
-                    System.out.println(
-                            "\nInvalid choice. Please try again."
-                    );
+
+                    case "3":
+
+                        running = false;
+
+                        System.out.println(
+                                "\nThank you for using RoadGuard."
+                        );
+
+                        break;
+
+
+                    default:
+
+                        System.out.println(
+                                "\nInvalid choice. Please try again."
+                        );
+                }
             }
-        }
 
-        scanner.close();
+        } catch (IllegalStateException e) {
+
+            System.out.println(
+                    "\nInput system error: "
+                    + e.getMessage()
+            );
+
+        } finally {
+
+            scanner.close();
+        }
     }
 }

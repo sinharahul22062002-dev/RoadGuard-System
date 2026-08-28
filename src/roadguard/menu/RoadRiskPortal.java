@@ -1,7 +1,6 @@
 package roadguard.menu;
 
 import java.util.Scanner;
-
 import roadguard.dao.RoadRiskDAO;
 
 public class RoadRiskPortal {
@@ -22,12 +21,12 @@ public class RoadRiskPortal {
         while (running) {
 
             System.out.println("\n===== ROAD RISK MANAGEMENT =====");
-            System.out.println("1. Add Road Risk");
-            System.out.println("2. View Road Risks");
+            System.out.println("1. Add Risk Assessment");
+            System.out.println("2. View Risk Assessments");
             System.out.println("3. Back");
 
             System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+            String choice = scanner.nextLine().trim();
 
             switch (choice) {
 
@@ -44,7 +43,9 @@ public class RoadRiskPortal {
                     break;
 
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println(
+                            "Invalid choice. Please enter 1, 2 or 3."
+                    );
             }
         }
     }
@@ -52,30 +53,98 @@ public class RoadRiskPortal {
 
     private void addRisk() {
 
-        System.out.println("\n===== ADD ROAD RISK =====");
+        System.out.println("\n===== ADD RISK ASSESSMENT =====");
 
-        System.out.print("Enter location: ");
-        String location = scanner.nextLine();
+        int locationId;
 
-        System.out.print("Enter road condition (GOOD/MODERATE/BAD): ");
-        String roadCondition = scanner.nextLine().toUpperCase();
+        // Location ID
+        try {
 
-        System.out.print("Enter traffic level (LOW/MEDIUM/HIGH): ");
-        String trafficLevel = scanner.nextLine().toUpperCase();
+            System.out.print("Enter location ID: ");
 
-        System.out.print("Enter accident count: ");
-        int accidentCount = Integer.parseInt(scanner.nextLine());
+            locationId = Integer.parseInt(
+                    scanner.nextLine().trim()
+            );
 
+            if (locationId <= 0) {
+
+                System.out.println(
+                        "Location ID must be a positive number."
+                );
+
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid location ID. Please enter a number."
+            );
+
+            return;
+        }
+
+
+        // Accident Score
+        Double accidentScore = readScore(
+                "Enter accident score (0-100): "
+        );
+
+        if (accidentScore == null) {
+            return;
+        }
+
+
+        // Road Score
+        Double roadScore = readScore(
+                "Enter road condition score (0-100): "
+        );
+
+        if (roadScore == null) {
+            return;
+        }
+
+
+        // Traffic Score
+        Double trafficScore = readScore(
+                "Enter traffic score (0-100): "
+        );
+
+        if (trafficScore == null) {
+            return;
+        }
+
+
+        // Complaint Score
+        Double complaintScore = readScore(
+                "Enter complaint score (0-100): "
+        );
+
+        if (complaintScore == null) {
+            return;
+        }
+
+
+        // Calculate total score
+        double totalScore =
+                (accidentScore
+                + roadScore
+                + trafficScore
+                + complaintScore) / 4.0;
+
+
+        // Calculate risk level
         String riskLevel;
 
-        if (roadCondition.equals("BAD")
-                && trafficLevel.equals("HIGH")) {
+        if (totalScore >= 90) {
+
+            riskLevel = "CRITICAL";
+
+        } else if (totalScore >= 75) {
 
             riskLevel = "HIGH";
 
-        } else if (roadCondition.equals("BAD")
-                || trafficLevel.equals("HIGH")
-                || accidentCount >= 5) {
+        } else if (totalScore >= 50) {
 
             riskLevel = "MEDIUM";
 
@@ -84,20 +153,74 @@ public class RoadRiskPortal {
             riskLevel = "LOW";
         }
 
-        System.out.println("Calculated Risk: " + riskLevel);
 
-        boolean success = roadRiskDAO.addRisk(
-                location,
-                roadCondition,
-                trafficLevel,
-                accidentCount,
-                riskLevel
+        System.out.println(
+                "\nCalculated Total Score: "
+                + totalScore
         );
 
+        System.out.println(
+                "Calculated Risk Level: "
+                + riskLevel
+        );
+
+
+        // Save assessment
+        boolean success =
+                roadRiskDAO.addRisk(
+                        locationId,
+                        accidentScore,
+                        roadScore,
+                        trafficScore,
+                        complaintScore,
+                        totalScore,
+                        riskLevel
+                );
+
+
         if (success) {
-            System.out.println("Road risk added successfully!");
+
+            System.out.println(
+                    "\nRisk assessment added successfully!"
+            );
+
         } else {
-            System.out.println("Failed to add road risk.");
+
+            System.out.println(
+                    "\nFailed to add risk assessment."
+            );
+        }
+    }
+
+
+    private Double readScore(String message) {
+
+        try {
+
+            System.out.print(message);
+
+            double score = Double.parseDouble(
+                    scanner.nextLine().trim()
+            );
+
+            if (score < 0 || score > 100) {
+
+                System.out.println(
+                        "Score must be between 0 and 100."
+                );
+
+                return null;
+            }
+
+            return score;
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid score. Please enter a number."
+            );
+
+            return null;
         }
     }
 }

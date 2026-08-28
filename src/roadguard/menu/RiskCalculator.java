@@ -70,7 +70,9 @@ public class RiskCalculator {
         }
 
      
-        score += accidents * 5;
+       score += accidents * 5;
+
+        score = Math.min(score, 100);
 
         String risk;
 

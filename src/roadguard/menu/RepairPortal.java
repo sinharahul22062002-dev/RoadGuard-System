@@ -1,7 +1,8 @@
 package roadguard.menu;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
-
 import roadguard.dao.RepairDAO;
 
 public class RepairPortal {
@@ -10,7 +11,6 @@ public class RepairPortal {
     private RepairDAO repairDAO;
 
     public RepairPortal(Scanner scanner) {
-
         this.scanner = scanner;
         this.repairDAO = new RepairDAO();
     }
@@ -28,7 +28,7 @@ public class RepairPortal {
             System.out.println("4. Back");
 
             System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+            String choice = scanner.nextLine().trim();
 
             switch (choice) {
 
@@ -49,7 +49,9 @@ public class RepairPortal {
                     break;
 
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println(
+                            "Invalid choice. Please enter 1, 2, 3 or 4."
+                    );
             }
         }
     }
@@ -59,65 +61,299 @@ public class RepairPortal {
 
         System.out.println("\n===== ADD REPAIR =====");
 
-        System.out.print("Enter location: ");
-        String location = scanner.nextLine();
+        int complaintId;
 
-        System.out.print("Enter repair description: ");
-        String description = scanner.nextLine();
+        // Complaint ID
+        try {
 
+            System.out.print("Enter complaint ID: ");
+
+            complaintId = Integer.parseInt(
+                    scanner.nextLine().trim()
+            );
+
+            if (complaintId <= 0) {
+                System.out.println(
+                        "Complaint ID must be a positive number."
+                );
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid complaint ID. Please enter a number."
+            );
+            return;
+        }
+
+
+        int assignedTo;
+
+        // Assigned Authority ID
+        try {
+
+            System.out.print(
+                    "Enter assigned authority user ID: "
+            );
+
+            assignedTo = Integer.parseInt(
+                    scanner.nextLine().trim()
+            );
+
+            if (assignedTo <= 0) {
+                System.out.println(
+                        "User ID must be a positive number."
+                );
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid user ID. Please enter a number."
+            );
+            return;
+        }
+
+
+        // Repair Type
+        System.out.println("\nSelect Repair Type:");
+        System.out.println("1. POTHOLE_REPAIR");
+        System.out.println("2. ROAD_REPAIR");
+        System.out.println("3. STREETLIGHT_REPAIR");
+        System.out.println("4. SIGNAGE_REPAIR");
+        System.out.println("5. DRAINAGE_REPAIR");
+        System.out.println("6. OTHER");
+
+        System.out.print("Enter choice: ");
+
+        String typeChoice =
+                scanner.nextLine().trim();
+
+        String repairType;
+
+        switch (typeChoice) {
+
+            case "1":
+                repairType = "POTHOLE_REPAIR";
+                break;
+
+            case "2":
+                repairType = "ROAD_REPAIR";
+                break;
+
+            case "3":
+                repairType = "STREETLIGHT_REPAIR";
+                break;
+
+            case "4":
+                repairType = "SIGNAGE_REPAIR";
+                break;
+
+            case "5":
+                repairType = "DRAINAGE_REPAIR";
+                break;
+
+            case "6":
+                repairType = "OTHER";
+                break;
+
+            default:
+                System.out.println(
+                        "Invalid repair type."
+                );
+                return;
+        }
+
+
+        // Status
+        System.out.println("\nSelect Status:");
+        System.out.println("1. ASSIGNED");
+        System.out.println("2. IN_PROGRESS");
+        System.out.println("3. COMPLETED");
+        System.out.println("4. CANCELLED");
+
+        System.out.print("Enter choice: ");
+
+        String statusChoice =
+                scanner.nextLine().trim();
+
+        String status;
+
+        switch (statusChoice) {
+
+            case "1":
+                status = "ASSIGNED";
+                break;
+
+            case "2":
+                status = "IN_PROGRESS";
+                break;
+
+            case "3":
+                status = "COMPLETED";
+                break;
+
+            case "4":
+                status = "CANCELLED";
+                break;
+
+            default:
+                System.out.println(
+                        "Invalid status."
+                );
+                return;
+        }
+
+
+        // Assigned Date
+        System.out.print(
+                "Enter assigned date (YYYY-MM-DD): "
+        );
+
+        String assignedDate =
+                scanner.nextLine().trim();
+
+        if (assignedDate.isEmpty()) {
+
+            System.out.println(
+                    "Assigned date cannot be empty."
+            );
+            return;
+        }
+
+        // Validate date format
+        try {
+
+            LocalDate.parse(assignedDate);
+
+        } catch (DateTimeParseException e) {
+
+            System.out.println(
+                    "Invalid date. Please use YYYY-MM-DD format."
+            );
+            return;
+        }
+
+
+        // Add repair
         boolean success =
-                repairDAO.addRepair(location, description);
+                repairDAO.addRepair(
+                        complaintId,
+                        assignedTo,
+                        repairType,
+                        status,
+                        assignedDate
+                );
+
 
         if (success) {
-            System.out.println("Repair added successfully!");
+
+            System.out.println(
+                    "\nRepair added successfully!"
+            );
+
         } else {
-            System.out.println("Failed to add repair.");
+
+            System.out.println(
+                    "\nFailed to add repair."
+            );
         }
     }
 
 
     private void updateStatus() {
 
-        System.out.println("\n===== UPDATE REPAIR STATUS =====");
+        System.out.println(
+                "\n===== UPDATE REPAIR STATUS ====="
+        );
 
-        System.out.print("Enter repair ID: ");
-        int repairId =
-                Integer.parseInt(scanner.nextLine());
+        int repairId;
 
-        System.out.println("1. PENDING");
-        System.out.println("2. IN_PROGRESS");
-        System.out.println("3. COMPLETED");
+        try {
 
-        System.out.print("Enter choice: ");
-        String choice = scanner.nextLine();
+            System.out.print("Enter repair ID: ");
 
-        String status;
+            repairId = Integer.parseInt(
+                    scanner.nextLine().trim()
+            );
 
-        if (choice.equals("1")) {
+            if (repairId <= 0) {
 
-            status = "PENDING";
+                System.out.println(
+                        "Repair ID must be a positive number."
+                );
 
-        } else if (choice.equals("2")) {
+                return;
+            }
 
-            status = "IN_PROGRESS";
+        } catch (NumberFormatException e) {
 
-        } else if (choice.equals("3")) {
+            System.out.println(
+                    "Invalid repair ID. Please enter a number."
+            );
 
-            status = "COMPLETED";
-
-        } else {
-
-            System.out.println("Invalid choice.");
             return;
         }
 
+
+        System.out.println("\n1. ASSIGNED");
+        System.out.println("2. IN_PROGRESS");
+        System.out.println("3. COMPLETED");
+        System.out.println("4. CANCELLED");
+
+        System.out.print("Enter choice: ");
+
+        String choice =
+                scanner.nextLine().trim();
+
+        String status;
+
+        switch (choice) {
+
+            case "1":
+                status = "ASSIGNED";
+                break;
+
+            case "2":
+                status = "IN_PROGRESS";
+                break;
+
+            case "3":
+                status = "COMPLETED";
+                break;
+
+            case "4":
+                status = "CANCELLED";
+                break;
+
+            default:
+                System.out.println(
+                        "Invalid status choice."
+                );
+                return;
+        }
+
+
         boolean success =
-                repairDAO.updateStatus(repairId, status);
+                repairDAO.updateStatus(
+                        repairId,
+                        status
+                );
+
 
         if (success) {
-            System.out.println("Repair status updated!");
+
+            System.out.println(
+                    "Repair status updated successfully!"
+            );
+
         } else {
-            System.out.println("Update failed.");
+
+            System.out.println(
+                    "Repair status update failed."
+            );
         }
     }
 }
