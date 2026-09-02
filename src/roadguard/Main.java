@@ -25,9 +25,19 @@ public class Main {
             UserService userService =
                     new UserService(userDAO);
 
+                    System.out.println("\n╔══════════════════════════════════════╗"
+                        );
+                        System.out.println(
+                                "║     WELCOME TO ROADGUARD SYSTEM      ║"
+                        );
+                        System.out.println(
+                                "╚══════════════════════════════════════╝"
+                        );
+
             boolean running = true;
 
             while (running) {
+                
 
                 System.out.println(
                         "\n===== ROADGUARD SYSTEM ====="
